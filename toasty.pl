@@ -1,5 +1,5 @@
 #!/usr/bin/perl -w
-# ToastyScript v1.0.0.  Communicates with the Super Toasty server.
+# ToastyScript v1.0.1.  Communicates with the Super Toasty server.
 #
 # Modified from ProwlScript, by Zachary West.
 # http://www.prowlapp.com/static/prowl.pl
@@ -60,9 +60,10 @@ use Pod::Usage;
 my %options = ();
 GetOptions(\%options, 'apikey=s', 'apikeyfile=s',
 	'application=s', 'event=s', 'notification=s',
-	'help|?') or pod2usage(2);
+	'imageurl=s', 'help|?') or pod2usage(2);
 
 $options{'application'} ||= "ToastyScript";
+$options{'imageurl'} ||= "";
 
 pod2usage(-verbose => 2) if (exists($options{'help'}));
 pod2usage(-message => "$0: Event name is required") if (!exists($options{'event'}));
@@ -86,6 +87,7 @@ if (!exists($options{'apikey'}) && !exists($options{'apikeyfile'})) {
 $options{'application'} =~ s/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg;
 $options{'event'} =~ s/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg;
 $options{'notification'} =~ s/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg;
+$options{'imageurl'} =~ s/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg;
 
 # Generate our HTTP request.
 my ($userAgent, $request, $response, $requestURL);
@@ -93,11 +95,12 @@ $userAgent = LWP::UserAgent->new;
 $userAgent->agent("ToastyScript/1.0");
 $userAgent->env_proxy();
 
-$requestURL = sprintf("http://api.supertoasty.com/notify/%s?sender=%s&title=%s&text=%s",
+$requestURL = sprintf("http://api.supertoasty.com/notify/%s?sender=%s&title=%s&text=%s&image=%s",
 	$options{'apikey'},
 	$options{'application'},
 	$options{'event'},
-	$options{'notification'});
+	$options{'notification'},
+	$options{'imageurl'});
 
 $request = HTTP::Request->new(GET => $requestURL);
 
@@ -123,6 +126,8 @@ toasty.pl [options] event_information
    -help              Display all help information.
    -apikey=...        Your Toasty API key (device ID).
    -apikeyfile=...    A file containing your Toasty API key (device ID).
+   -imageurl=...      An image URL to send along with the notification.
+                      Needs to be .PNG or .JPG.
 
  Event information:
    -application=...   The name of the application.
@@ -148,6 +153,10 @@ The name of the Application part of the notification. If none is provided, Toast
 =item B<-event>
 
 The name of the Event part of the notification. This is generally the action which occurs, such as "disk partitioning completed."
+
+=item B<-imageurl>
+
+An image URL to send along with the notification.  This should be a .PNG or .JPG file, and it will look best if it's square and 128x128.
 
 =item B<-notification>
 

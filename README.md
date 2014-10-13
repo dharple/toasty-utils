@@ -12,8 +12,9 @@ This is a (nearly) drop-in replacement for Zachary West's excellent
 command-line options have been maintained, with the exception of the
 priority and the url flags, which are not supported by Toasty.
 
-Notably absent is the image flag.  In my tests I was unable to get this
-to work, so I didn't bother including it.
+There's also support for sending an image along with the notification.  Note
+that this must be a URL that points at a PNG or JPG file, and that 128x128 is
+the ideal resolution (according to the API docs).
 
 Sample command:
 
