@@ -17,6 +17,5 @@ to work, so I didn't bother including it.
 
 Sample command:
 
-  ./toasty.pl -apikey=UUID -application=machos -event="host down" -notification="host is down.  run for the hills."
+    ./toasty.pl -apikey=UUID -application=machos -event="host down" -notification="host is down.  run for the hills."
 
-# vim: textwidth=74
